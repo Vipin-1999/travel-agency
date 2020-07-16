@@ -1,0 +1,38 @@
+const http = require('http');
+// const request = require('request')
+const resource = require('./resources')
+const accessToken = require('./secret.js')
+const crossProduct = require('./crossProduct')
+const fetch = require('node-fetch');
+// const fetchData = require('./fetchData.js')
+
+const hostname = '127.0.0.1';
+const port = 3000;
+
+const cities = ['Bangalore', 'Kolkata', 'Delhi', 'Hyderabad', 'Chennai']
+const searchQuery = ['Travel Agency', 'Travel Agents', 'International Travel Agent']
+
+let url = resource.baseURL + searchQuery[0] + ' ' + cities[0] + resource.queryString + accessToken;
+
+const fetchData = async (url, x) => {
+    try {
+        // console.log(`\n Fetching ${x[1]} in ${x[0]} \n`)
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log(json.data)
+        return json.data
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const server = http.createServer();
+
+server.on('request', async (req, res) => {
+    const data = await fetchData(url, ["Tavel Agency", "Bangalore"]);
+    res.end(JSON.stringify(data))
+});
+
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
